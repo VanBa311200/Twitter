@@ -1,16 +1,41 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@import './font.css';
+@import './toastify.css';
+@import './Csstransition.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-black;
+  }
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+@layer components {
+  .hoverRounded-Blue {
+    @apply rounded-full hover:bg-[#1d9bf033] cursor-pointer transition duration-300 ease-out;
+  }
+  .hoverRounded-Smoke {
+    @apply rounded-full hover:bg-[#d9d9d933] cursor-pointer transition duration-300 ease-out;
+  }
 
-* {
-  box-sizing: border-box;
+  .iconSideBar {
+    @apply text-[26.5px] text-textMain;
+  }
+
+  .iconLogo {
+    @apply text-4xl text-textMain;
+  }
+
+  .buttonApp {
+    @apply flex outline-none focus:outline-none w-full shadow-md justify-center rounded-full text-white bg-primary text-[17px] min-h-[52px] items-center font-medium cursor-pointer hover:bg-primaryDark transition duration-200 ease-in;
+  }
+
+  .btn-primary--medium {
+    @apply flex focus:outline-none w-full px-4 shadow-sm min-w-[36px] justify-center items-center rounded-full text-white bg-primary text-[15px] min-h-[34px] font-medium cursor-pointer focus:bg-primary/80 hover:bg-primaryDark transition duration-200 ease-in;
+  }
+
+  .disable {
+    @apply opacity-50 cursor-none select-none pointer-events-none;
+  }
 }

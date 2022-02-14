@@ -1,0 +1,19 @@
+.Toastify__toast-theme--colored.Toastify__toast--default {
+  @apply bg-primary text-textMain flex items-center rounded-md !important;
+}
+
+.Toastify__close-button {
+  @apply hidden;
+}
+
+.Toastify__toast {
+  @apply min-h-[44px] !important;
+}
+
+.Toastify__toast-body {
+  @apply text-center;
+}
+
+.Toastify__toast-container {
+  @apply min-w-[200px] w-auto !important;
+}
