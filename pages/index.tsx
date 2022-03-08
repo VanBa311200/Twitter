@@ -1,119 +1,126 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { doc } from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
+import { CgSpinner } from 'react-icons/cg';
+import { useSession } from 'next-auth/react';
 
 import Breadcrumb from '../components/Breadcrumb';
 import Divide from '../components/Divide';
 import Layout from '../components/Layout';
 import PostTweetInput from '../components/PostTweetInput';
 import SideBar from '../components/SideBar';
-import { getAllDocument, uploadMultilImages } from '../firebase/services';
-import { addDocument } from '../firebase/services';
-import { AuthContext } from '../context/AuthProvider';
-import { db } from '../firebase/firebaseClient';
 import { GroupTweetPost } from '../components/GroupTweetPost';
-import { toast } from 'react-toastify';
 import { PostDataInterface } from '../types/posts';
+import { uploadMutilImage, validateImage } from '../utils';
+import { postApi } from '../api/post';
+import { UserInterFace } from '../types/auth';
+import BoxSearch from '../components/BoxSearch';
+import BoxFriend from '../components/BoxFriend';
 
-interface Props {
-  trendingResults: any;
-  followResults: any;
-}
+interface Props {}
 
-const Home = ({ trendingResults, followResults }: Props) => {
+const Home = (Props: Props) => {
+  const [isFetchTweet, setIsFetchTweet] = useState(true);
   const [isLoadingTweet, setIsLoadingTweet] = useState(false);
-  const { signOut, user, authLoading } = useContext(AuthContext);
-  const [postsTweet, setPostTweet] = useState<[PostDataInterface]>();
+  const [postsTweet, setPostTweet] =
+    useState<[PostDataInterface<UserInterFace>]>();
+  const { data: session } = useSession();
 
-  const handleOnSubmit = async (input: String, files: Array<File>) => {
+  const handleOnSubmit = async (text: string, files: Array<File>) => {
+    // console.log({ files });
+
     if (isLoadingTweet === true) return;
     setIsLoadingTweet(true);
-    console.log({ input, files });
 
-    try {
-      let listImg;
-      if (!!files.length) {
-        listImg = await uploadMultilImages(files, 'posts/');
-      }
-
-      await addDocument('posts', {
-        userRef: user,
-        image: listImg || null,
-        text: input,
-      });
-      toast('Tweet của bạn đã được gửi thành công !!!', {
-        position: toast.POSITION.BOTTOM_CENTER,
-      });
-
-      setIsLoadingTweet(false);
-    } catch (error) {
-      toast('Đã xảy ra lỗi. Hãy thử lại !!!', {
+    // check validate images
+    const isValidateImage = validateImage(files);
+    if (!isValidateImage) {
+      toast('🛠 Hình không đúng định dạng (gif, jpeg, jpg, png).', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
       setIsLoadingTweet(false);
-      console.log(error);
+      return;
+    } else {
+      await uploadMutilImage(files)
+        .then(async (value) => {
+          // console.log(value);
+          const dataForm: PostDataInterface<UserInterFace> = {
+            userRef: session?._id as string,
+            text: text,
+            images: value as [],
+          };
+          const res = await postApi.createPost(dataForm).catch((error) => {
+            setIsLoadingTweet(false);
+            console.error(error);
+          });
+          if (res) {
+            setIsLoadingTweet(false);
+            toast('🎉Đăng Tweet thành công.', {
+              position: toast.POSITION.BOTTOM_CENTER,
+            });
+          }
+        })
+        .catch(() => {
+          toast('💣Upload hình không thành công. Hãy thử lại', {
+            position: toast.POSITION.BOTTOM_CENTER,
+          });
+          setIsLoadingTweet(false);
+          return;
+        });
     }
   };
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const posts = await getAllDocument('posts');
-      setPostTweet(posts as [PostDataInterface]);
-      console.log('__POSTS-ALL', posts);
-    };
+    async function fetchPost() {
+      const getPosts = await postApi.getAllPost();
+      setIsFetchTweet(false);
+      setPostTweet(getPosts);
+      console.log({ '[GET]getAllPost': getPosts });
+    }
 
-    fetchPosts();
-    return () => {};
+    fetchPost();
   }, []);
 
   return (
     <Layout>
-      {authLoading ? (
-        <div className="flex">Loading ....</div>
-      ) : (
-        <div className="container">
-          <div className="flex w-full">
-            <SideBar />
-            <div className="flex justify-between grow min-w-0">
-              <div className="max-w-[600px] border-r border-l border-divide flex min-h-screen flex-col grow min-w-0">
-                <div className="flex flex-col grow relative">
-                  <Breadcrumb />
-                  <PostTweetInput
-                    onSubmit={handleOnSubmit}
-                    isLoading={isLoadingTweet}
-                  />
-                  <Divide />
-                  {!postsTweet?.length ? (
-                    <div className="text-textMain text-center">Loading...</div>
-                  ) : (
-                    <GroupTweetPost posts={postsTweet} />
-                    // <div className="text-textMain text-center">Loading...</div>
-                  )}
+      <div className="container">
+        <div className="flex w-full">
+          <SideBar />
+          <div className="flex justify-between grow min-w-0">
+            <div className="lg:max-w-[600px] w-full border-r border-l border-divide flex min-h-screen flex-col grow min-w-0">
+              <div className="flex flex-col grow relative">
+                <Breadcrumb />
+                <PostTweetInput
+                  onSubmit={handleOnSubmit}
+                  isLoading={isLoadingTweet}
+                />
+                <Divide />
+                {isFetchTweet ? (
+                  <div className="flex justify-center">
+                    <CgSpinner className="text-primary text-4xl animate-spin" />
+                  </div>
+                ) : (
+                  <GroupTweetPost posts={postsTweet} />
+                  // <div className="text-textMain text-center">Loading...</div>
+                )}
+              </div>
+            </div>
+
+            {/* Menu right */}
+            <div className=" xl:w-[350px] lg:w-[290px] hidden lg:flex-col lg:flex relative">
+              <div className="fixed flex-1 w-[inherit] h-full">
+                <div className="flex flex-col h-full">
+                  <BoxSearch />
+                  <BoxFriend />
                 </div>
               </div>
-
-              <div className=" xl:w-[350px] lg:w-[290px] hidden lg:flex"></div>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </Layout>
   );
 };
 
-// export const getServerSideProps = async (context: any) => {
-//   const trendingResults = await fetch('https://jsonkeeper.com/b/NKEV').then(
-//     (res) => res.json()
-//   );
-//   const followResults = await fetch('https://jsonkeeper.com/b/WWMJ').then(
-//     (res) => res.json()
-//   );
-
-//   return {
-//     props: {
-//       trendingResults,
-//       followResults,
-//     },
-//   };
-// };
+Home.auth = true;
 
 export default Home;

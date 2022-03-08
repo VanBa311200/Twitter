@@ -1,18 +1,12 @@
 import Image from 'next/image';
-import React, {
-  ReactElement,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import { classNames, readAllFiles } from '../utils';
+import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import { classNames } from '../utils';
 import { IoImageOutline, IoLocationOutline, IoClose } from 'react-icons/io5';
 import { RiFileGifLine } from 'react-icons/ri';
 import { BsEmojiSmile } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { Picker } from 'emoji-mart';
-import { AuthContext } from '../context/AuthProvider';
+import { useSession } from 'next-auth/react';
 
 interface Props {
   textButton?: string;
@@ -27,14 +21,12 @@ export default function PostTweetInput({
   onSubmit,
   isLoading,
 }: Props): ReactElement {
-  const { user } = useContext(AuthContext);
   const refInput = useRef(null);
   const refTweet = useRef(null);
+  const { data: session } = useSession();
   const [input, setInput] = useState('');
   const [showEmoji, setShowEmoji] = useState(false);
-  const [selectFile, setSelectFile] = useState<
-    Array<FileReader['result'] | null>
-  >([]);
+  const [listFile, setListFile] = useState<File[]>([]);
 
   // auto resize textArea when typing
   const handleAutoResizeTexarea = (e: { target: HTMLInputElement }) => {
@@ -44,8 +36,10 @@ export default function PostTweetInput({
     setInput(target.value);
   };
 
-  const handleRemoveImage = (e: any) => {
-    setSelectFile((prev) => prev.filter((item) => item !== e));
+  const handleRemoveImage = (item: any) => {
+    const arr = [...listFile];
+    const newArr = arr.filter((ele) => ele !== item);
+    setListFile(newArr);
   };
 
   // handle add Emoji to input
@@ -63,32 +57,24 @@ export default function PostTweetInput({
   };
 
   const handleOnsubmit = async () => {
-    await onSubmit(input, selectFile);
+    await onSubmit(input, listFile);
 
     // clean input & file when submit done
     setInput('');
-    setSelectFile([]);
+    setListFile([]);
   };
 
   const handleOnChangeInputFile = async (e: { target: HTMLInputElement }) => {
     const arrImg = Array.from(e.target.files as FileList);
-    const listImg = await readAllFiles(arrImg);
+    setListFile(arrImg);
 
-    const newArr = [...selectFile, ...listImg];
-
-    if (newArr.length > 4) {
+    if (arrImg.length > 4) {
       toast('Vui lòng chọn không quá 4 ảnh.', {
         position: toast.POSITION.BOTTOM_CENTER,
       });
       return false;
     }
-    setSelectFile(newArr);
-    // calHeightTweet(refTweet);
   };
-
-  // useEffect(() => {
-  //   calHeightTweet(refTweet);
-  // }, []);
 
   return (
     <div
@@ -101,7 +87,11 @@ export default function PostTweetInput({
           {/* image profile */}
           <div className={classNames('pt-1 mr-3', isLoading ? 'disable' : '')}>
             <Image
-              src={user?.photoURL ? user.photoURL : '/images/profile.png'}
+              src={
+                session?.user?.image
+                  ? session?.user?.image
+                  : '/images/profile.png'
+              }
               width={48}
               height={48}
               alt="images-profile"
@@ -124,28 +114,32 @@ export default function PostTweetInput({
               />
 
               {/* images tweet */}
-              {selectFile.length > 0 ? (
+              {listFile.length > 0 ? (
                 <div className="flex mt-1 gap-4">
-                  {selectFile.map((e: any, i: React.Key | null | undefined) => (
-                    <div className="w-full flex" key={i}>
-                      <div className="relative w-full pb-[81%]">
-                        <Image
-                          src={e}
-                          layout="fill"
-                          alt="photo"
-                          objectFit="cover"
-                          className="rounded-xl"
-                        />
-                        <div className="flex absolute top-1 left-1 bg-black/60 rounded-full p-[7px] items-center justify-center cursor-pointer">
-                          <IoClose
-                            className="text-white text-lg"
-                            style={{ color: 'white' }}
-                            onClick={() => handleRemoveImage(e)}
+                  {listFile.map((ele: any, i: React.Key | null | undefined) => {
+                    return (
+                      <div className="w-full flex" key={i}>
+                        <div className="relative w-full pb-[81%]">
+                          <Image
+                            src={URL.createObjectURL(ele)}
+                            layout="fill"
+                            alt="photo"
+                            objectFit="cover"
+                            className="rounded-xl"
                           />
+                          <div
+                            onClick={(e) => handleRemoveImage(ele)}
+                            className="flex absolute top-1 left-1 bg-black/60 rounded-full p-[7px] items-center justify-center cursor-pointer"
+                          >
+                            <IoClose
+                              className="text-white text-lg"
+                              style={{ color: 'white' }}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 ''
@@ -166,12 +160,12 @@ export default function PostTweetInput({
                         onClick={(e) => {
                           (e.target as HTMLInputElement).value = '';
                         }}
-                        disabled={selectFile.length === 4}
+                        disabled={listFile.length === 4}
                       />
                       <IoImageOutline
                         className={classNames(
                           'text-[20px] text-primary',
-                          selectFile.length === 4 ? 'disable' : ''
+                          listFile.length === 4 ? 'disable' : ''
                         )}
                       />
                     </div>
@@ -224,7 +218,7 @@ export default function PostTweetInput({
                       'btn-primary--medium mt-3 min-h-[36px]',
                       !input ? 'disabled:disable' : ''
                     )}
-                    disabled={!input.trim() && !selectFile.length && !isLoading}
+                    disabled={!input.trim() && !listFile.length && !isLoading}
                     onClick={handleOnsubmit}
                   >
                     <span>{textButton}</span>

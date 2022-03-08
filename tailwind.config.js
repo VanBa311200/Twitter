@@ -1,3 +1,5 @@
+const plugin = require('tailwindcss/plugin');
+
 module.exports = {
   mode: 'jit',
   content: [
@@ -25,10 +27,20 @@ module.exports = {
         divide: '#2f3336',
         success: '#00ba7c',
         pinkRed: '#f91880',
+        greySmoke: '#202327',
       },
       boxShadow: {
         shadownApp:
           'rgb(255 255 255 / 20%) 0px 0px 15px, rgb(255 255 255 / 15%) 0px 0px 3px 1px',
+      },
+      animation: {
+        loadingHorizontal: 'loading 1s linear infinite',
+      },
+      keyframes: {
+        loading: {
+          '0%': { left: 0 },
+          '100%': { left: '100%', width: '6rem' },
+        },
       },
     },
     container: {
@@ -42,5 +54,22 @@ module.exports = {
     },
   },
 
-  plugins: [],
+  plugins: [
+    plugin(function ({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-hide': {
+          /* IE and Edge */
+          '-ms-overflow-style': 'none',
+
+          /* Firefox */
+          'scrollbar-width': 'none',
+
+          /* Safari and Chrome */
+          '&::-webkit-scrollbar': {
+            display: 'none',
+          },
+        },
+      });
+    }),
+  ],
 };

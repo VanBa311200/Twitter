@@ -1,8 +1,9 @@
-import { UserInterFace } from './auth';
-
-export interface PostDataInterface {
-  id: string;
-  image: [string];
-  text: string;
-  userRef: UserInterFace;
+export interface PostDataInterface<UserInterFace> {
+  _id?: string | null;
+  images?: [] | null;
+  text?: string | null;
+  userRef?: UserInterFace | string;
+  like?: null | [];
+  comment?: null | [];
+  createdAt?: string;
 }

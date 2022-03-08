@@ -8,20 +8,27 @@ import { RiShareForward2Line } from 'react-icons/ri';
 import { classNames } from '../utils';
 import { ImageProfile } from './ImageProfile';
 import { PostDataInterface } from '../types/posts';
+import { UserInterFace } from '../types/auth';
+import { format, TDate } from 'timeago.js';
 
 interface Props {
-  post: PostDataInterface;
+  post: PostDataInterface<UserInterFace>;
 }
 
 export const ItemTweetPost = ({ post }: Props) => {
   const [isLike, setIsLike] = useState(false);
+  const { userRef } = post;
 
   return (
     <div className="w-full pt-3 px-4 border-b border-divide cursor-pointer hover:bg-white/5 transition duration-300 ease-out">
       <div className="flex">
         {/* image */}
         <div className="flex cursor-pointer shrink-0">
-          <ImageProfile photoURL={post?.userRef?.photoURL || null} />
+          <ImageProfile
+            photoURL={
+              (userRef as UserInterFace)?.photoURL || './images/profile.png'
+            }
+          />
         </div>
         <div className="flex flex-col flex-1 pb-3 min-w-[0%]">
           {/* Author info */}
@@ -30,18 +37,18 @@ export const ItemTweetPost = ({ post }: Props) => {
               <div className="flex shrink w-full">
                 {/* name author */}
                 <span className="text-[15px] text-textMain font-medium cursor-pointer group-hover:underline shrink-0">
-                  {post?.userRef?.name}
+                  {(userRef as UserInterFace)?.fullName}
                 </span>
                 {/* tagName author */}
                 <span className="text-[15px] text-textSub ml-1 cursor-pointer shrink truncate">
-                  {post?.userRef?.tag}
+                  {(userRef as UserInterFace)?.tag}
                 </span>
               </div>
               {/* dot */}
               <span className="text-textSub px-1 shrink-0">·</span>
               {/* time */}
               <span className="text-[15px] text-textSub cursor-pointer hover:underline shrink-0">
-                1 giờ
+                {format(post.createdAt as TDate)}
               </span>
             </div>
             <div className="flex items-center ml-5 ">
@@ -56,10 +63,10 @@ export const ItemTweetPost = ({ post }: Props) => {
             <span className=" min-w-0 break-words">{post?.text}</span>
           </div>
           {/* content images */}
-          {!!post?.image ? (
+          {!!post?.images ? (
             <div className="mt-3 flex">
               <div className="flex rounded-xl overflow-hidden w-full gap-0.5">
-                {post?.image.map((img, i) => (
+                {post?.images.map((img, i) => (
                   <div className="relative pb-[54.5852%] w-full" key={i}>
                     <Image src={img} layout="fill" objectFit="cover" priority />
                   </div>
@@ -78,7 +85,7 @@ export const ItemTweetPost = ({ post }: Props) => {
                 <FaRegComment className="text-textSub group-hover:text-primary  transition duration-300 ease-out" />
               </div>
               <div className="px-3 text-textSub text-[13px] group-hover:text-primary  transition duration-300 ease-out">
-                34
+                {post?.comment?.length}
               </div>
             </div>
             <div className="flex items-center group cursor-pointer">
@@ -87,7 +94,7 @@ export const ItemTweetPost = ({ post }: Props) => {
                 <AiOutlineRetweet className="text-textSub group-hover:text-success  transition duration-300 ease-out" />
               </div>
               <div className="px-3 text-textSub text-[13px] group-hover:text-success  transition duration-300 ease-out">
-                34
+                0
               </div>
             </div>
             <div
@@ -115,7 +122,7 @@ export const ItemTweetPost = ({ post }: Props) => {
                   isLike ? 'text-pinkRed' : ''
                 )}
               >
-                34
+                {post?.like?.length}
               </div>
             </div>
             <div className="flex items-center group cursor-pointer">

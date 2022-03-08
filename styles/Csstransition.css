@@ -15,14 +15,14 @@
 
 /* User modal */
 .Modal__UserBox-enter {
-  @apply opacity-0;
+  @apply opacity-0  z-50;
 }
 .Modal__UserBox-enter-active {
-  @apply opacity-100 transition duration-300 ease-out;
+  @apply opacity-100 transition duration-300 ease-out  z-50;
 }
 .Modal__UserBox-exit {
   /* @apply opacity-0; */
 }
 .Modal__UserBox-exit-active {
-  @apply opacity-0 transition duration-300 ease-out;
+  @apply opacity-0 transition duration-300 ease-out  z-50;
 }

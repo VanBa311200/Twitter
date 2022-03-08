@@ -1,10 +1,11 @@
 export interface UserInterFace {
-  createAt: any;
+  createAt?: any;
   email: string | null | undefined;
-  id: string | null | undefined;
-  name: string;
+  _id?: string | null | undefined;
+  fullName: string;
   tag?: string;
-  photoURL: string;
-  providerId: string;
+  photoURL?: string;
+  providerId?: string;
   uid: string;
+  isOnLine?: boolean;
 }

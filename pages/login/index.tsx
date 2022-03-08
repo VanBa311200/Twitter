@@ -1,30 +1,34 @@
+import axios from 'axios';
+import { GetServerSidePropsContext } from 'next';
+import { getSession, signIn, useSession } from 'next-auth/react';
 import Image from 'next/image';
-import React, { useContext, useEffect } from 'react';
+import Router from 'next/router';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineTwitter } from 'react-icons/ai';
 import { BsFacebook } from 'react-icons/bs';
 import { FaGooglePlus } from 'react-icons/fa';
 
 import Layout from '../../components/Layout';
-import { AuthContext } from '../../context/AuthProvider';
+import LoadingPage from '../../components/LoadingPage';
 
-interface Props {}
+interface Props {
+  session?: any;
+}
 
 const Login = (props: Props) => {
-  const { signInWithFacebook, signInWithGoogle, authLoading } =
-    useContext(AuthContext);
+  const { status } = useSession();
 
   useEffect(() => {
-    if (localStorage.getItem('__AUTH-FBASE')) {
-      window.location.replace('/');
+    if (status === 'authenticated') {
+      Router.replace('/');
     }
-
-    return () => {};
-  }, []);
+  }, [status]);
+  console.log({ status });
 
   return (
     <Layout>
-      {authLoading ? (
-        <div className="text-textMain">Loadding auth ...</div>
+      {status === 'loading' || status === 'authenticated' ? (
+        <LoadingPage />
       ) : (
         <div className="w-full">
           <div className="flex flex-col">
@@ -63,14 +67,22 @@ const Login = (props: Props) => {
                   <div className="flex flex-col">
                     <button
                       className="btn-primary--medium w-[300px] min-w-[280px] max-w-[380px] h-10 bg-textMain text-black mb-[10px] relative hover:text-textMain"
-                      onClick={() => signInWithFacebook()}
+                      onClick={() =>
+                        signIn('facebook', {
+                          callbackUrl: '/',
+                        })
+                      }
                     >
                       <BsFacebook className="ml-2.5 text-2xl absolute top-[50%] left-0 transform -translate-y-[50%]" />
                       Sign in with Facebook
                     </button>
                     <button
                       className="btn-primary--medium w-[300px] min-w-[280px] max-w-[380px] h-10 bg-textMain text-black mb-[10px] relative hover:text-textMain"
-                      onClick={() => signInWithGoogle()}
+                      onClick={() =>
+                        signIn('google', {
+                          callbackUrl: '/',
+                        })
+                      }
                     >
                       <FaGooglePlus className="ml-2.5 text-2xl absolute top-[50%] left-0 transform -translate-y-[50%]" />
                       Sign in with Google
@@ -148,11 +160,10 @@ const Login = (props: Props) => {
 };
 
 export default Login;
-
-// export const getServerSideProps = async (
-//   context: GetServerSidePropsContext
-// ) => {
-//   return {
-//     props: {},
-//   };
-// };
+export async function getServerSideProps({ req }: GetServerSidePropsContext) {
+  return {
+    props: {
+      session: await getSession({ req }),
+    },
+  };
+}
