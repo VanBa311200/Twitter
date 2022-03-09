@@ -1,9 +1,8 @@
-import axios from 'axios';
 import { GetServerSidePropsContext } from 'next';
 import { getSession, signIn, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Router from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { AiOutlineTwitter } from 'react-icons/ai';
 import { BsFacebook } from 'react-icons/bs';
 import { FaGooglePlus } from 'react-icons/fa';
