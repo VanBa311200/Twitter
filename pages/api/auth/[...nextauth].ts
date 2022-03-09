@@ -28,7 +28,7 @@ export default NextAuth({
     }),
     // ...add more providers here
   ],
-  secret: 'nicenicenice',
+  secret: process.env.SECRET,
   pages: {
     signIn: '/auth/signin',
     signOut: '/auth/signout',
