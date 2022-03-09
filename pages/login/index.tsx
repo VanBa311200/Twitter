@@ -22,7 +22,11 @@ const Login = (props: Props) => {
       Router.replace('/');
     }
   }, [status]);
-  console.log({ status, NEXTAUTH_URL: process.env.NEXTAUTH_URL });
+  console.log({
+    status,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    VERCEL: process.env.VERCEL_URL,
+  });
 
   return (
     <Layout>

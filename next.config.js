@@ -20,5 +20,6 @@ module.exports = {
 
     FACEBOOK_CLIENT_ID: '1094188091404076',
     FACEBOOK_CLIENT_SECRET: '9342cfa519a27bd7313cd4a8507016dd',
+    NEXTAUTH_URL: 'https://twitter-wine.vercel.app',
   },
 };
