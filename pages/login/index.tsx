@@ -22,7 +22,7 @@ const Login = (props: Props) => {
       Router.replace('/');
     }
   }, [status]);
-  console.log({ status });
+  console.log({ status, NEXTAUTH_URL: process.env.NEXTAUTH_URL });
 
   return (
     <Layout>
