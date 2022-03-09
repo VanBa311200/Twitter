@@ -39,7 +39,6 @@ export default NextAuth({
   session: { maxAge: 24 * 60 * 60 },
   callbacks: {
     redirect({ url, baseUrl }) {
-      console.log({ url, baseUrl });
       if (url.startsWith(baseUrl)) return url;
       // Allows relative callback URLs
       else if (url.startsWith('/')) return new URL(url, baseUrl).toString();
