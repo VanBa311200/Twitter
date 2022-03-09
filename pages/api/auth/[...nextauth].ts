@@ -63,13 +63,13 @@ export default NextAuth({
                 new UserSchema(obj).save();
               } catch (error) {
                 console.error({ Signin: error });
-                return '/auth/error?error=AccessDenied';
+                return null;
               }
             }
           })
           .catch((error) => {
             console.error(error);
-            return '/auth/error?error=AccessDenied';
+            return null;
           });
         return true;
       } else {
