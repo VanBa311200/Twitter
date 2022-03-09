@@ -2,6 +2,7 @@ import { useSession } from 'next-auth/react';
 import React, { useEffect, useState, memo } from 'react';
 import { userApi } from '../api/user';
 import { UserInterFace } from '../types/auth';
+import { classNames } from '../utils';
 import IconSpinnerLoading from './IconSpinnerLoading';
 import { ImageProfile } from './ImageProfile';
 
@@ -32,9 +33,10 @@ const BoxFriend = () => {
         Bạn bè của bạn
       </div>
       <div
-        className={`flex flex-col hover:overflow-y-auto scroll-smooth scroll scrollbar-hide ${
-          isLoadingFetchFriends && 'items-center'
-        }`}
+        className={classNames(
+          `flex flex-col hover:overflow-y-auto scroll-smooth scroll scrollbar-hide`,
+          isLoadingFetchFriends ? 'items-center' : ''
+        )}
       >
         {isLoadingFetchFriends ? (
           <IconSpinnerLoading />
@@ -50,14 +52,6 @@ const BoxFriend = () => {
             />
           ))
         )}
-        {/* <ItemFriend
-          fullName="Nguyễn Công Danh nef nef nef nef nef nef"
-          tag={'@nguyencongdanh'}
-        />
-        <ItemFriend fullName="Hà Minh Đức" tag={'@haminhduc'} />
-        <ItemFriend fullName="Phước Đại" tag={'@phuocdai'} />
-        <ItemFriend fullName="Khương Ngu" tag={'@khuongngu'} />
-        <ItemFriend fullName="Thiên Ân" tag={'@thienan'} /> */}
       </div>
     </div>
   );

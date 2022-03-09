@@ -37,7 +37,7 @@ const Auth = ({ children }: Props) => {
 };
 
 type CustomAppProps = AppProps & {
-  Component: NextComponentType & { auth?: boolean }; // add auth type
+  Component: NextComponentType & { auth?: boolean };
 };
 
 function MyApp({

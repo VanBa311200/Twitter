@@ -1,4 +1,5 @@
 import React, { ReactElement } from 'react';
+import { classNames } from '../utils';
 
 interface Props {
   text: string;
@@ -14,19 +15,22 @@ export default function Button({
   color = 'white',
   fontSize = '15px',
 }: Props | any): ReactElement {
-  let paddingX = '16px';
+  let paddingX = { padding: '16px 0' };
 
   if (variant === 'large') {
-    paddingX = '32px';
+    paddingX = { padding: '32px 0' };
   } else if (variant === 'small') {
-    paddingX = '8px';
+    paddingX = { padding: '8px 0' };
   }
 
   return (
     <div
-      className={`flex items-center justify-center px-[16px] px-[${paddingX}]`}
+      className={classNames(`flex items-center justify-center px-[16px] `)}
+      style={paddingX}
     >
-      <span className={`text-[${fontSize}] text-white font-bold`}>{text}</span>
+      <span className={`text-white font-bold`} style={{ fontSize: fontSize }}>
+        {text}
+      </span>
     </div>
   );
 }
