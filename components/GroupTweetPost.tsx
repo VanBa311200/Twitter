@@ -1,8 +1,9 @@
+import { UserInterFace } from '../types/auth';
 import { PostDataInterface } from '../types/posts';
 import { ItemTweetPost } from './ItemTweetPost';
 
 interface Props {
-  posts?: [PostDataInterface];
+  posts?: [PostDataInterface<UserInterFace>];
 }
 
 export const GroupTweetPost = ({ posts }: Props) => {
