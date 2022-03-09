@@ -32,11 +32,16 @@ export default async function handle(
    * @route /post
    */
   if (req.method === 'GET') {
-    await PostSchema.find({})
-      .sort({ createdAt: -1 })
-      .populate('userRef')
-      .then((value) => {
-        return res.json({ message: '✅Get all post success.', data: value });
-      });
+    try {
+      const posts = await PostSchema.find({})
+        .sort({ createdAt: -1 })
+        .populate('userRef');
+
+      return res
+        .status(200)
+        .json({ message: '✅ Get all post success.', data: posts });
+    } catch (error) {
+      return res.json({ message: '❌ Get all post failed.' });
+    }
   }
 }

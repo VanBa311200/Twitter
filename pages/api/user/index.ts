@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import UserSchema from '../../../models/User';
+import dbConnect from '../../../utils/connectDB';
+
+dbConnect();
 
 export default async function hanlde(
   req: NextApiRequest,
