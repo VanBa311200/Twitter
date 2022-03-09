@@ -25,7 +25,7 @@ const Auth = ({ children }: Props) => {
   useEffect(() => {
     if (status === 'loading') return;
     if (!isUser) router.replace('/login');
-  }, [isUser, status]);
+  }, [isUser, status, router]);
 
   if (isUser) {
     return children;

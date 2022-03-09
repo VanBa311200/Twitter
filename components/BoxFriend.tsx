@@ -24,7 +24,7 @@ const BoxFriend = () => {
     };
     fetchListFriend();
     return () => {};
-  }, []);
+  }, [session?._id]);
 
   return (
     <div className="flex w-full bg-[#15181c] rounded-tl-xl rounded-tr-xl h-full mt-4 flex-1 flex-col">

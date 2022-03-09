@@ -68,7 +68,13 @@ export const ItemTweetPost = ({ post }: Props) => {
               <div className="flex rounded-xl overflow-hidden w-full gap-0.5">
                 {post?.images.map((img, i) => (
                   <div className="relative pb-[54.5852%] w-full" key={i}>
-                    <Image src={img} layout="fill" objectFit="cover" priority />
+                    <Image
+                      src={img}
+                      layout="fill"
+                      objectFit="cover"
+                      priority
+                      alt={i + ''}
+                    />
                   </div>
                 ))}
               </div>

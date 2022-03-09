@@ -11,7 +11,7 @@ export const GroupTweetPost = ({ posts }: Props) => {
     <>
       {!posts?.length ? (
         <div className="text-textMain text-center mt-3">
-          🤷‍♂️You haven't any Tweet!!! <br />{' '}
+          🤷‍♂️You haven't any Tweet!!! <br />
           <span className="block text-lg">
             ✨Let's make tweet for yourself.
           </span>
