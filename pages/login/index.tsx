@@ -25,7 +25,7 @@ const Login = (props: Props) => {
   console.log({
     status,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-    VERCEL: process.env.VERCEL_URL,
+    VERCEL_URL: process.env.VERCEL_URL,
   });
 
   return (
