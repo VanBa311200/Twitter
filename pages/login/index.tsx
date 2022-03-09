@@ -26,6 +26,8 @@ const Login = (props: Props) => {
     status,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     VERCEL_URL: process.env.VERCEL_URL,
+    SECRET: process.env.SECRET,
+    MONGO_URI: process.env.MONGO_URI,
   });
 
   return (
