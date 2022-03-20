@@ -1,11 +1,10 @@
-import axios from 'axios';
 import Image from 'next/image';
 import React, { useContext, useRef } from 'react';
 import { IoCheckmarkOutline } from 'react-icons/io5';
 import { CSSTransition } from 'react-transition-group';
+
 import Divide from './Divide';
-import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import { AuthContext } from '../context/AuthProvider';
 
 interface Props {
   show: boolean;
@@ -14,13 +13,7 @@ interface Props {
 
 export const ModalUserLogout = ({ show, onClose }: Props) => {
   const nodeRef = useRef(null);
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  const handleLogout = async () => {
-    const data = await signOut({ redirect: false, callbackUrl: '/login' });
-    router.replace(data.url);
-  };
+  const { auth, SignOut } = useContext(AuthContext);
 
   return (
     <CSSTransition
@@ -43,11 +36,7 @@ export const ModalUserLogout = ({ show, onClose }: Props) => {
             <div className="flex items-start xl:items-center p-3 w-full">
               <div className="relative w-[40px] h-[40px] shrink-0">
                 <Image
-                  src={
-                    session?.user?.image
-                      ? session?.user?.image
-                      : '/images/profile.png'
-                  }
+                  src={auth?.photoURL ? auth.photoURL : '/images/profile.png'}
                   alt={'profile-images'}
                   width={48}
                   height={48}
@@ -57,11 +46,11 @@ export const ModalUserLogout = ({ show, onClose }: Props) => {
               <div className="flex flex-1  min-w-0">
                 <div className="flex flex-col mx-3 items-start min-w-0 max-w-full">
                   <div className="text-textMain flex-1 truncate text-[15px] max-w-full font-bold">
-                    {session?.user?.name}
+                    {auth?.fullName}
                   </div>
                   <div>
                     <span className="text-textSub text-[15px]">
-                      {session?.tag as string}
+                      {auth?.tag}
                     </span>
                   </div>
                 </div>
@@ -73,10 +62,10 @@ export const ModalUserLogout = ({ show, onClose }: Props) => {
             <Divide className="my-0" />
             <div
               className="flex p-4 text-[15px] text-textMain hover:bg-white/10 transition duration-300 ease-out cursor-pointer"
-              onClick={() => handleLogout()}
+              onClick={() => SignOut()}
             >
               <div>
-                Đăng xuất <span>{session?.tag as string}</span>
+                Đăng xuất <span>{auth?.tag}</span>
               </div>
             </div>
           </div>

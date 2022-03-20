@@ -1,12 +1,21 @@
-import Image from 'next/image';
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
-import { classNames } from '../utils';
-import { IoImageOutline, IoLocationOutline, IoClose } from 'react-icons/io5';
+import React, {
+  memo,
+  ReactElement,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from 'react';
+import { IoImageOutline, IoLocationOutline } from 'react-icons/io5';
 import { RiFileGifLine } from 'react-icons/ri';
 import { BsEmojiSmile } from 'react-icons/bs';
 import { toast } from 'react-toastify';
 import { Picker } from 'emoji-mart';
-import { useSession } from 'next-auth/react';
+
+import { ImageProfile } from './ImageProfile';
+import { classNames } from '../utils';
+import ListImageOnInputTweet from './ListImageOnInputTweet';
+import { AuthContext } from '../context/AuthProvider';
 
 interface Props {
   textButton?: string;
@@ -15,15 +24,15 @@ interface Props {
   isLoading: boolean;
 }
 
-export default function PostTweetInput({
+const PostTweetInput = ({
   textButton = 'Đăng Tweet',
   placeholder = 'Chuyện gì đang xảy ra?',
   onSubmit,
   isLoading,
-}: Props): ReactElement {
+}: Props): ReactElement => {
   const refInput = useRef(null);
   const refTweet = useRef(null);
-  const { data: session } = useSession();
+  const { auth } = useContext(AuthContext);
   const [input, setInput] = useState('');
   const [showEmoji, setShowEmoji] = useState(false);
   const [listFile, setListFile] = useState<File[]>([]);
@@ -36,11 +45,9 @@ export default function PostTweetInput({
     setInput(target.value);
   };
 
-  const handleRemoveImage = (item: any) => {
-    const arr = [...listFile];
-    const newArr = arr.filter((ele) => ele !== item);
-    setListFile(newArr);
-  };
+  const handleRemoveImage = useCallback((item: any) => {
+    setListFile((prev) => prev.filter((ele) => ele !== item));
+  }, []);
 
   // handle add Emoji to input
   const addEmoji = (e: any) => {
@@ -85,17 +92,9 @@ export default function PostTweetInput({
       <div className="flex py-2 grow">
         <div className="flex px-4 grow">
           {/* image profile */}
-          <div className={classNames('pt-1 mr-3', isLoading ? 'disable' : '')}>
-            <Image
-              src={
-                session?.user?.image
-                  ? session?.user?.image
-                  : '/images/profile.png'
-              }
-              width={48}
-              height={48}
-              alt="images-profile"
-              className="rounded-full"
+          <div className={classNames(isLoading ? 'disable' : '')}>
+            <ImageProfile
+              photoURL={auth?.photoURL ? auth?.photoURL : '/images/profile.png'}
             />
           </div>
 
@@ -114,36 +113,11 @@ export default function PostTweetInput({
               />
 
               {/* images tweet */}
-              {listFile.length > 0 ? (
-                <div className="flex mt-1 gap-4">
-                  {listFile.map((ele: any, i: React.Key | null | undefined) => {
-                    return (
-                      <div className="w-full flex" key={i}>
-                        <div className="relative w-full pb-[81%]">
-                          <Image
-                            src={URL.createObjectURL(ele)}
-                            layout="fill"
-                            alt="photo"
-                            objectFit="cover"
-                            className="rounded-xl"
-                          />
-                          <div
-                            onClick={(e) => handleRemoveImage(ele)}
-                            className="flex absolute top-1 left-1 bg-black/60 rounded-full p-[7px] items-center justify-center cursor-pointer"
-                          >
-                            <IoClose
-                              className="text-white text-lg"
-                              style={{ color: 'white' }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                ''
-              )}
+
+              <ListImageOnInputTweet
+                listFile={listFile}
+                onClick={handleRemoveImage}
+              />
             </div>
 
             {/* icon tweet */}
@@ -233,4 +207,6 @@ export default function PostTweetInput({
       </div>
     </div>
   );
-}
+};
+
+export default memo(PostTweetInput);

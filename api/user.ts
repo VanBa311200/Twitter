@@ -1,14 +1,20 @@
-import axios from 'axios';
-import { URL_NEXTJS } from '../constants';
+import axiosClient from './axiosClient';
 
 export const userApi = {
-  async getAllUser() {
+  async getAllUser(): Promise<any> {
     try {
-      const res = await axios.get(`${URL_NEXTJS}/api/user`);
-
-      return res.data.data;
+      const res = await axiosClient.get(`/user`);
+      return res;
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    }
+  },
+  async getUser(_id: string): Promise<any> {
+    try {
+      const res = await axiosClient.post(`/user/getUser`, _id);
+      return res;
+    } catch (error) {
+      console.error(error);
     }
   },
 };

@@ -56,3 +56,21 @@ export const validateImage = (files: File[]) => {
 
   return result;
 };
+
+// show popup window center screen
+export function popupwindow(url: string, w: number = 500, h: number = 600) {
+  var y = window.outerHeight / 2 + window.screenY - h / 2;
+  var x = window.outerWidth / 2 + window.screenX - w / 2;
+  return window.open(
+    url,
+    '_self',
+    'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=auto, resizable=no, copyhistory=no, width=' +
+      w +
+      ', height=' +
+      h +
+      ', top=' +
+      y +
+      ', left=' +
+      x
+  );
+}

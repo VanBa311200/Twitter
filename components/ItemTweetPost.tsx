@@ -5,6 +5,7 @@ import { BsHeartFill, BsHeart } from 'react-icons/bs';
 import { FaRegComment } from 'react-icons/fa';
 import { FiMoreHorizontal } from 'react-icons/fi';
 import { RiShareForward2Line } from 'react-icons/ri';
+
 import { classNames } from '../utils';
 import { ImageProfile } from './ImageProfile';
 import { PostDataInterface } from '../types/posts';
@@ -26,23 +27,25 @@ export const ItemTweetPost = ({ post }: Props) => {
         <div className="flex cursor-pointer shrink-0">
           <ImageProfile
             photoURL={
-              (userRef as UserInterFace)?.photoURL || './images/profile.png'
+              (userRef as UserInterFace)?.photoURL || '/images/profile.png'
             }
           />
         </div>
         <div className="flex flex-col flex-1 pb-3 min-w-[0%]">
           {/* Author info */}
           <div className="flex justify-between pb-1">
-            <div className="flex group">
-              <div className="flex shrink w-full">
-                {/* name author */}
-                <span className="text-[15px] text-textMain font-medium cursor-pointer group-hover:underline shrink-0">
-                  {(userRef as UserInterFace)?.fullName}
-                </span>
-                {/* tagName author */}
-                <span className="text-[15px] text-textSub ml-1 cursor-pointer shrink truncate">
-                  {(userRef as UserInterFace)?.tag}
-                </span>
+            <div className="flex group min-w-0">
+              <div className="flex shrink w-full min-w-0 truncate">
+                <div className="flex truncate shrink min-w-0">
+                  {/* name author */}
+                  <span className="text-[15px] text-textMain font-medium cursor-pointer group-hover:underline">
+                    {(userRef as UserInterFace)?.fullName}
+                  </span>
+                  {/* tagName author */}
+                  <span className="text-[15px] text-textSub ml-1 cursor-pointer shrink  min-w-0 truncate">
+                    {(userRef as UserInterFace)?.tag}
+                  </span>
+                </div>
               </div>
               {/* dot */}
               <span className="text-textSub px-1 shrink-0">·</span>
@@ -72,8 +75,8 @@ export const ItemTweetPost = ({ post }: Props) => {
                       src={img}
                       layout="fill"
                       objectFit="cover"
-                      priority
                       alt={i + ''}
+                      priority
                     />
                   </div>
                 ))}

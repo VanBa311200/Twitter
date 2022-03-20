@@ -3,7 +3,7 @@ import { PostDataInterface } from '../types/posts';
 import { ItemTweetPost } from './ItemTweetPost';
 
 interface Props {
-  posts?: [PostDataInterface<UserInterFace>];
+  posts: PostDataInterface<UserInterFace>[] | null;
 }
 
 export const GroupTweetPost = ({ posts }: Props) => {

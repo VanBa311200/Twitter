@@ -8,4 +8,6 @@ export interface UserInterFace {
   providerId?: string;
   uid: string;
   isOnLine?: boolean;
+  updatedAt?: any;
+  __v?: any;
 }

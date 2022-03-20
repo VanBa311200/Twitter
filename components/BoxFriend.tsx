@@ -1,31 +1,28 @@
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useState, memo } from 'react';
-import { userApi } from '../api/user';
-import { UserInterFace } from '../types/auth';
+import { memo, useContext, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { AuthContext } from '../context/AuthProvider';
+import { fetchListFriend } from '../features/friend/friendSlice';
 import { classNames } from '../utils';
 import IconSpinnerLoading from './IconSpinnerLoading';
 import { ImageProfile } from './ImageProfile';
 
-const BoxFriend = () => {
-  const { data: session } = useSession();
-  const [isLoadingFetchFriends, setIsLoadingFetchFriends] =
-    useState<boolean>(true);
-  const [listFriend, setListFriend] = useState<UserInterFace[]>([]);
+interface Propss {
+  onlines?: [string];
+}
+
+const BoxFriend = ({ onlines }: Propss) => {
+  const { auth } = useContext(AuthContext);
+  const dispatch = useAppDispatch();
+  const { list, status } = useAppSelector((state) => state.friend);
 
   useEffect(() => {
-    const fetchListFriend = async () => {
-      await userApi
-        .getAllUser()
-        .then((value: UserInterFace[]) => {
-          const newArr = value.filter((item) => item._id !== session?._id);
-          setListFriend(newArr);
-          setIsLoadingFetchFriends(false);
-        })
-        .catch((error) => console.log(error));
-    };
-    fetchListFriend();
+    dispatch(fetchListFriend(auth?._id as string))
+      .unwrap()
+      .then((value) => console.log({ '[GET] FetchFriends::::': value }))
+      .catch((err) => console.log(err));
+
     return () => {};
-  }, [session?._id]);
+  }, [auth]);
 
   return (
     <div className="flex w-full bg-[#15181c] rounded-tl-xl rounded-tr-xl h-full mt-4 flex-1 flex-col">
@@ -35,19 +32,19 @@ const BoxFriend = () => {
       <div
         className={classNames(
           `flex flex-col hover:overflow-y-auto scroll-smooth scroll scrollbar-hide`,
-          isLoadingFetchFriends ? 'items-center' : ''
+          status === 'loading' ? 'items-center' : ''
         )}
       >
-        {isLoadingFetchFriends ? (
+        {status === 'loading' ? (
           <IconSpinnerLoading />
         ) : (
-          listFriend?.length > 0 &&
-          listFriend.map((item) => (
+          list?.length &&
+          list.map((item) => (
             <ItemFriend
               key={item._id}
               fullName={item.fullName}
               tag={item.tag}
-              isOnLine={item.isOnLine ? item.isOnLine : false}
+              isOnLine={onlines?.includes(item._id as string) ? true : false}
               photoURL={item.photoURL ? item.photoURL : undefined}
             />
           ))

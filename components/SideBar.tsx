@@ -16,14 +16,14 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { classNames } from '../utils';
 import { ModalUserLogout } from './ModalUserLogout';
-import { useSession } from 'next-auth/react';
+import { AuthContext } from '../context/AuthProvider';
 
 interface Props {}
 
 function SideBar({}: Props): ReactElement {
   const router = useRouter();
   const [showModalUser, setShowModalUSer] = useState(false);
-  const { data: session } = useSession();
+  const { auth } = useContext(AuthContext);
 
   const navs = [
     {
@@ -146,9 +146,7 @@ function SideBar({}: Props): ReactElement {
                 <div className="relative w-[40px] h-[40px] shrink-0">
                   <Image
                     src={
-                      session?.user?.image
-                        ? session?.user?.image
-                        : '/images/profile.png'
+                      auth?.photoURL ? auth?.photoURL : '/images/profile.png'
                     }
                     alt={'profile-images'}
                     layout="fill"
@@ -158,11 +156,11 @@ function SideBar({}: Props): ReactElement {
                 <div className="hidden xl:flex flex-1  min-w-0">
                   <div className="flex flex-col mx-3 items-start min-w-0 max-w-full">
                     <div className="text-textMain flex-1 truncate text-[15px] max-w-full font-bold">
-                      {session?.user?.name}
+                      {auth?.fullName}
                     </div>
                     <div>
                       <span className="text-textSub text-[15px]">
-                        {session?.tag as string}
+                        {auth?.tag}
                       </span>
                     </div>
                   </div>
